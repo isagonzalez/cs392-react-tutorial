@@ -4,7 +4,7 @@ import CourseCard from "./CourseCard";
 const CourseList = ({ courses }) => (
   <div className="course-list">
     {Object.values(courses).map((course) => (
-      <CourseCard key={course.number} course={course} />
+      <CourseCard key={`${course.term}${course.number}`} course={course} />
     ))}
   </div>
 );
