@@ -1,0 +1,5 @@
+.course-list {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 14rem));
+}
