@@ -1,0 +1,18 @@
+.term-selector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.term-selector button {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  background-color: #e7e4e4;
+  border-radius: 8px;
+}
+
+.term-selector button.selected {
+  background-color: #288bb7;
+  color: white;
+}
