@@ -10,6 +10,7 @@ const terms = ["All", "Fall", "Winter", "Spring"];
 
 const Main = () => {
   const [selectedTerm, setSelectedTerm] = useState("Fall");
+
   const [data, isLoading, error] = useJsonQuery(
     "https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php"
   );

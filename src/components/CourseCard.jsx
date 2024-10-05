@@ -1,7 +1,10 @@
 import "./CourseCard.css";
 
-const CourseCard = ({ course }) => (
-  <div className="course-card">
+const CourseCard = ({ course, isSelected, toggleCourseSelection }) => (
+  <div
+    className={`course-card ${isSelected ? "selected" : ""}`}
+    onClick={() => toggleCourseSelection(course)}
+  >
     <div className="main-info">
       <h2>
         {course.term} CS {course.number}

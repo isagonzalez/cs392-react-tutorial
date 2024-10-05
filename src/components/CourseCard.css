@@ -10,3 +10,20 @@
 .meeting-time {
   border-top: 1px solid #ccc;
 }
+
+.course-card.selected {
+  border: 2px solid #288bb7;
+  background-color: #288bb733;
+}
+
+.course-card.selected .meeting-time {
+  border-top: 2px solid #288bb7;
+}
+
+.course-card:hover {
+  background-color: #288cb72a;
+}
+
+.course-card.selected:hover {
+  border: 2px solid #51b4de;
+}
