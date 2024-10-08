@@ -1,3 +1,32 @@
 .main-content {
   padding: 16px;
 }
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  margin: 16px 0px;
+}
+
+.modal-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  background-color: #e7e4e4;
+  border-radius: 8px;
+}
+
+.modal-btn p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.modal-btn span {
+  font-size: 1.2rem;
+}

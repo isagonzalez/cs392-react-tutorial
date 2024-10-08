@@ -5,11 +5,15 @@ import { useJsonQuery } from "./utilities/fetch";
 import Banner from "./components/Banner";
 import CourseList from "./components/CourseList";
 import TermSelector from "./components/TermSelector";
+import Modal from "./components/Modal";
+import CoursePlan from "./components/CoursePlan";
 
 const terms = ["All", "Fall", "Winter", "Spring"];
 
 const Main = () => {
   const [selectedTerm, setSelectedTerm] = useState("Fall");
+  const [selectedCourses, setSelectedCourses] = useState([]);
+  const [open, setOpen] = useState(false);
 
   const [data, isLoading, error] = useJsonQuery(
     "https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php"
@@ -19,15 +23,34 @@ const Main = () => {
   if (isLoading) return <h1>Loading schedule data...</h1>;
   if (!data) return <h1>No schedule data found</h1>;
 
+  const openModal = () => setOpen(true);
+  const closeModal = () => setOpen(false);
+
   return (
     <div className="main-content">
       <Banner title={data.title} />
-      <TermSelector
-        terms={terms}
+      <div className="top-bar">
+        <TermSelector
+          terms={terms}
+          selectedTerm={selectedTerm}
+          setSelectedTerm={setSelectedTerm}
+        />
+        <button className="modal-btn" onClick={openModal}>
+          <span className="material-symbols-rounded">collections_bookmark</span>
+          <p>Course Plan</p>
+        </button>
+      </div>
+
+      <Modal open={open} close={closeModal}>
+        <CoursePlan selectedCourses={selectedCourses} />
+      </Modal>
+
+      <CourseList
+        courses={data.courses}
         selectedTerm={selectedTerm}
-        setSelectedTerm={setSelectedTerm}
+        selectedCourses={selectedCourses}
+        setSelectedCourses={setSelectedCourses}
       />
-      <CourseList courses={data.courses} selectedTerm={selectedTerm} />
     </div>
   );
 };
