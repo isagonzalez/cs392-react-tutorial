@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  cursor: pointer;
 }
 
 .meeting-time {
@@ -12,12 +13,12 @@
 }
 
 .course-card.selected {
-  border: 2px solid #288bb7;
+  border: 1px solid #288bb7;
   background-color: #288bb733;
 }
 
 .course-card.selected .meeting-time {
-  border-top: 2px solid #288bb7;
+  border-top: 1px solid #288bb7 !important;
 }
 
 .course-card:hover {
@@ -25,5 +26,11 @@
 }
 
 .course-card.selected:hover {
-  border: 2px solid #51b4de;
+  border: 1px solid #51b4de !important;
+}
+
+.course-card.conflict {
+  background-color: #52525209;
+  color: #ccc;
+  cursor: not-allowed;
 }

@@ -1,6 +1,6 @@
 import "./CourseList.css";
 import CourseCard from "./CourseCard";
-import { useState } from "react";
+import { hasTimeConflict } from "../utilities/scheduleUtils";
 
 const CourseList = ({
   courses,
@@ -24,7 +24,17 @@ const CourseList = ({
         )
       );
     } else {
-      setSelectedCourses([...selectedCourses, course]);
+      const hasConflict = selectedCourses.some((selectedCourse) =>
+        hasTimeConflict(selectedCourse, course)
+      );
+
+      if (!hasConflict) {
+        setSelectedCourses([...selectedCourses, course]);
+      } else {
+        console.log(
+          `Cannot select ${course.term} CS ${course.number} due to time conflict.`
+        );
+      }
     }
   };
 
@@ -35,18 +45,29 @@ const CourseList = ({
 
   return (
     <div className="course-list">
-      {filteredCourses.map((course) => (
-        <CourseCard
-          key={`${course.term}${course.number}`}
-          course={course}
-          isSelected={selectedCourses.some(
-            (selectedCourse) =>
-              selectedCourse.term === course.term &&
-              selectedCourse.number === course.number
-          )}
-          toggleCourseSelection={toggleCourseSelection}
-        />
-      ))}
+      {filteredCourses.map((course) => {
+        let isSelected = selectedCourses.some(
+          (selectedCourse) =>
+            selectedCourse.term === course.term &&
+            selectedCourse.number === course.number
+        );
+
+        let hasConflict = selectedCourses.some((selectedCourse) =>
+          hasTimeConflict(selectedCourse, course)
+        );
+
+        const canTake = !isSelected && !hasConflict;
+
+        return (
+          <CourseCard
+            key={`${course.term}${course.number}`}
+            course={course}
+            isSelected={isSelected}
+            canTake={canTake}
+            toggleCourseSelection={toggleCourseSelection}
+          />
+        );
+      })}
     </div>
   );
 };
