@@ -8,6 +8,7 @@ import TermSelector from "./components/TermSelector";
 import Modal from "./components/Modal";
 import CoursePlan from "./components/CoursePlan";
 import CourseForm from "./components/CourseForm";
+import { useDbData } from "./utilities/firebase";
 
 const terms = ["All", "Fall", "Winter", "Spring"];
 
@@ -25,12 +26,10 @@ const Main = () => {
     setEditingCourse(null);
   };
 
-  const [data, isLoading, error] = useJsonQuery(
-    "https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php"
-  );
+  const [data, error] = useDbData("/");
 
   if (error) return <h1>Error loading schedule data: {`${error}`}</h1>;
-  if (isLoading) return <h1>Loading schedule data...</h1>;
+  if (data === undefined) return <h1>Loading schedule data...</h1>;
   if (!data) return <h1>No schedule data found</h1>;
 
   const openModal = () => setOpen(true);
