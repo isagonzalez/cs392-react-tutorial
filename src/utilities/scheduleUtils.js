@@ -52,4 +52,4 @@ function parseTime(time) {
   return hours * 60 + minutes;
 }
 
-export { hasTimeConflict };
+export { hasTimeConflict, parseDays };

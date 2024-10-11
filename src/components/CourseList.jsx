@@ -7,6 +7,7 @@ const CourseList = ({
   selectedTerm,
   selectedCourses,
   setSelectedCourses,
+  startEditing,
 }) => {
   const toggleCourseSelection = (course) => {
     const isSelected = selectedCourses.some(
@@ -65,6 +66,7 @@ const CourseList = ({
             isSelected={isSelected}
             canTake={canTake}
             toggleCourseSelection={toggleCourseSelection}
+            startEditing={startEditing}
           />
         );
       })}

@@ -7,6 +7,7 @@ import CourseList from "./components/CourseList";
 import TermSelector from "./components/TermSelector";
 import Modal from "./components/Modal";
 import CoursePlan from "./components/CoursePlan";
+import CourseForm from "./components/CourseForm";
 
 const terms = ["All", "Fall", "Winter", "Spring"];
 
@@ -14,6 +15,15 @@ const Main = () => {
   const [selectedTerm, setSelectedTerm] = useState("Fall");
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [open, setOpen] = useState(false);
+  const [editingCourse, setEditingCourse] = useState(null);
+
+  const startEditing = (course) => {
+    setEditingCourse(course);
+  };
+
+  const stopEditing = (course) => {
+    setEditingCourse(null);
+  };
 
   const [data, isLoading, error] = useJsonQuery(
     "https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php"
@@ -45,12 +55,17 @@ const Main = () => {
         <CoursePlan selectedCourses={selectedCourses} />
       </Modal>
 
-      <CourseList
-        courses={data.courses}
-        selectedTerm={selectedTerm}
-        selectedCourses={selectedCourses}
-        setSelectedCourses={setSelectedCourses}
-      />
+      {editingCourse ? (
+        <CourseForm course={editingCourse} onCancel={stopEditing} />
+      ) : (
+        <CourseList
+          courses={data.courses}
+          selectedTerm={selectedTerm}
+          selectedCourses={selectedCourses}
+          setSelectedCourses={setSelectedCourses}
+          startEditing={startEditing}
+        />
+      )}
     </div>
   );
 };
