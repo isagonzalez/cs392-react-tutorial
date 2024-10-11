@@ -54,3 +54,20 @@ form button {
   font-family: "Poppins";
   margin-left: auto;
 }
+
+form .error-message {
+  color: red;
+  font-weight: 600;
+  margin: 0;
+}
+
+form .error {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+form .error span {
+  color: red;
+  font-size: 16px;
+}
