@@ -1,7 +1,13 @@
-import { useState } from "react";
 import "./App.css";
+import { useState } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useJsonQuery } from "./utilities/fetch";
 import Banner from "./components/Banner";
 import CourseList from "./components/CourseList";
 import TermSelector from "./components/TermSelector";

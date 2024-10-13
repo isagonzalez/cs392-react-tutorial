@@ -13,17 +13,18 @@ form {
   width: 100%;
 }
 
-form .field {
+.field {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-form .field label {
+.field label {
   font-weight: 600;
 }
 
-form .field input {
+.field input,
+.field select {
   padding: 8px;
   background-color: #e7e4e4;
   border: none;
@@ -31,43 +32,56 @@ form .field input {
   font-family: "Poppins";
 }
 
-form .field select {
-  padding: 8px;
-  background-color: #e7e4e4;
-  border: none;
-  border-radius: 4px;
-  font-family: "Poppins";
-}
-
-form .field .meeting-days {
+.field .meeting-days {
   display: flex;
   gap: 20px;
 }
 
-form button {
+.field .meeting-days label {
+  display: flex;
+  align-items: center;
+}
+
+.field .meeting-days input {
+  margin-right: 8px;
+}
+
+.actions {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.actions button {
   padding: 8px 16px;
-  background-color: #e31e4c;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-family: "Poppins";
-  margin-left: auto;
 }
 
-form .error-message {
+.actions .cancel {
+  background-color: #e31e4c;
+}
+
+.actions .submit {
+  background-color: #288bb7;
+  font-weight: 600;
+}
+
+.error-message {
   color: red;
   font-weight: 600;
   margin: 0;
 }
 
-form .error {
+.error {
   display: flex;
   gap: 4px;
   align-items: center;
 }
 
-form .error span {
+.error span {
   color: red;
   font-size: 16px;
 }

@@ -1,167 +1,206 @@
 import "./CourseForm.css";
-import { useState, useEffect } from "react";
 import { parseDays } from "../utilities/scheduleUtils";
+import { useFormData } from "../utilities/useFormData";
+import { useDbUpdate } from "../utilities/firebase";
+
+const validateForm = (key, val) => {
+  switch (key) {
+    case "title":
+      return val.length >= 2 ? "" : "Title must be at least 2 characters";
+    case "courseNumber":
+      return /^\d+(-\d+)?$/.test(val) ? "" : "Invalid course number format";
+    case "meetingDays":
+      return val.length > 0 ? "" : "Must select at least one meeting day";
+    default:
+      return "";
+  }
+};
+
+const InputField = ({ name, label, type = "text", state, change }) => (
+  <div className="field">
+    <label htmlFor={name}>{label}</label>
+    <input
+      className="form-control"
+      id={name}
+      value={state.values?.[name]}
+      onChange={change}
+      type={type}
+    />
+    {state.errors?.[name] && (
+      <div className="error">
+        <span className="material-symbols-rounded">error</span>
+        <p className="error-message">{state.errors[name]}</p>
+      </div>
+    )}
+  </div>
+);
+
+const SelectField = ({ name, label, options, state, change }) => (
+  <div className="field">
+    <label htmlFor={name}>{label}</label>
+    <select
+      className="form-control"
+      id={name}
+      value={state.values?.[name]}
+      onChange={change}
+    >
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+const CheckboxGroup = ({ name, label, options, state, change }) => {
+  const handleCheckboxChange = (day) => {
+    const selectedDays = state.values?.[name] || [];
+    const updatedDays = selectedDays.includes(day)
+      ? selectedDays.filter((d) => d !== day)
+      : [...selectedDays, day];
+
+    change({
+      target: { id: name, value: updatedDays },
+    });
+  };
+
+  return (
+    <div className="field">
+      <label>{label}</label>
+      <div className="meeting-days">
+        {options.map((day) => (
+          <label key={day}>
+            <input
+              type="checkbox"
+              value={day}
+              checked={state.values?.[name]?.includes(day)}
+              onChange={() => handleCheckboxChange(day)}
+            />
+            {day}
+          </label>
+        ))}
+      </div>
+      {state.errors?.[name] && (
+        <div className="error">
+          <span className="material-symbols-rounded">error</span>
+          <p className="error-message">{state.errors[name]}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ButtonBar = ({ message, disabled, onCancel }) => (
+  <div>
+    <div className="actions">
+      <button className="cancel" type="button" onClick={onCancel}>
+        Cancel
+      </button>
+      <button className="submit" type="submit" disabled={disabled}>
+        Submit
+      </button>
+    </div>
+    <span>{message}</span>
+  </div>
+);
 
 const CourseForm = ({ course, onCancel }) => {
-  const [title, setTitle] = useState(course ? course.title : "");
-  const [courseNumber, setCourseNumber] = useState(course ? course.number : "");
-  const [term, setTerm] = useState(course ? course.term : "Fall");
-  const [meetingDays, setMeetingDays] = useState(
-    course ? parseDays(course.meets.split(" ")[0]) : []
-  );
-  const [startTime, setStartTime] = useState(
-    course ? course.meets.split(" ")[1].split("-")[0] : ""
-  );
-  const [endTime, setEndTime] = useState(
-    course ? course.meets.split(" ")[1].split("-")[1] : ""
-  );
-
-  const [errors, setErrors] = useState({
-    title: "",
-    courseNumber: "",
-    meetingDays: "",
+  const courseID = `${course.term[0]}${course.number}`;
+  const [update, result] = useDbUpdate(`/courses/${courseID}`);
+  const [state, change] = useFormData(validateForm, {
+    title: course?.title || "",
+    courseNumber: course?.number || "",
+    term: course?.term || "Fall",
+    meetingDays: course ? parseDays(course.meets.split(" ")[0]) : [],
+    startTime: course ? course.meets.split(" ")[1].split("-")[0] : "",
+    endTime: course ? course.meets.split(" ")[1].split("-")[1] : "",
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      console.log("Form is valid");
-    }
-  };
+    const dayOrder = ["M", "Tu", "W", "Th", "F"];
 
-  const handleDayChange = (day) => {
-    setMeetingDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    const sortedMeetingDays = [...state.values.meetingDays].sort(
+      (a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b)
     );
-  };
 
-  useEffect(() => {
-    console.log("Form updated");
-    validateForm();
-  }, [title, courseNumber, meetingDays]);
+    const meets = `${sortedMeetingDays.join("")} ${state.values.startTime}-${
+      state.values.endTime
+    }`;
 
-  const validateForm = () => {
-    console.log("Validating form");
-    console.log(title, courseNumber, meetingDays);
-    const formErrors = { title: "", courseNumber: "", meetingDays: "" };
+    const updatedCourse = {
+      meets: meets,
+      number: state.values.courseNumber,
+      term: state.values.term,
+      title: state.values.title,
+    };
 
-    if (title.length < 2) {
-      formErrors.title = "Title must be at least 2 characters";
-    }
-
-    const courseNumberFormat = /^\d+(-\d+)?$/;
-    if (!courseNumber.match(courseNumberFormat)) {
-      formErrors.courseNumber = "Invalid course number format";
-    }
-
-    if (meetingDays.length === 0) {
-      formErrors.meetingDays = "Must select at least one meeting day";
-    }
-
-    setErrors(formErrors);
-
-    console.log(errors);
-
-    return Object.values(formErrors).every((error) => error === "");
+    update(updatedCourse);
+    onCancel();
   };
 
   return (
-    <div className="edit-form">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className={state.errors ? "was-validated" : ""}
+    >
       <h2>Edit Course</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="field">
-          <label htmlFor="title">Course Title</label>
-          <input
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          {errors.title.length > 0 && (
-            <div className="error">
-              <span className="material-symbols-rounded">error</span>
-              <p className="error-message">{errors.title}</p>
-            </div>
-          )}
-        </div>
 
-        <div className="field">
-          <label htmlFor="courseNumber">Course Number</label>
-          <input
-            type="text"
-            id="courseNumber"
-            value={courseNumber}
-            onChange={(e) => setCourseNumber(e.target.value)}
-          />
-          {errors.courseNumber.length > 0 && (
-            <div className="error">
-              <span className="material-symbols-rounded">error</span>
-              <p className="error-message">{errors.courseNumber}</p>
-            </div>
-          )}
-        </div>
+      <InputField
+        name="title"
+        label="Course Title"
+        state={state}
+        change={change}
+      />
 
-        <div className="field">
-          <label htmlFor="term">Term</label>
-          <select
-            id="term"
-            value={term}
-            onChange={(e) => setTerm(e.target.value)}
-          >
-            <option value="Fall">Fall</option>
-            <option value="Winter">Winter</option>
-            <option value="Spring">Spring</option>
-          </select>
-        </div>
+      <InputField
+        name="courseNumber"
+        label="Course Number"
+        state={state}
+        change={change}
+      />
 
-        <div className="field">
-          <label>Meeting Days</label>
-          <div className="meeting-days">
-            {["M", "Tu", "W", "Th", "F"].map((day) => (
-              <label key={day}>
-                <input
-                  type="checkbox"
-                  value={day}
-                  checked={meetingDays.includes(day)}
-                  onChange={() => handleDayChange(day)}
-                />
-                {day}
-              </label>
-            ))}
-          </div>
-          {errors.meetingDays.length > 0 && (
-            <div className="error">
-              <span className="material-symbols-rounded">error</span>
-              <p className="error-message">{errors.meetingDays}</p>
-            </div>
-          )}
-        </div>
+      <SelectField
+        name="term"
+        label="Term"
+        options={["Fall", "Winter", "Spring"]}
+        state={state}
+        change={change}
+      />
 
-        <div className="field">
-          <label htmlFor="startTime">Start Time</label>
-          <input
-            type="time"
-            id="startTime"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-          />
-        </div>
+      <CheckboxGroup
+        name="meetingDays"
+        label="Meeting Days"
+        options={["M", "Tu", "W", "Th", "F"]}
+        state={state}
+        change={change}
+      />
 
-        <div className="field">
-          <label htmlFor="endTime">End Time</label>
-          <input
-            type="time"
-            id="endTime"
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-          />
-        </div>
+      <InputField
+        name="startTime"
+        label="Start Time"
+        type="time"
+        state={state}
+        change={change}
+      />
 
-        <button type="button" onClick={onCancel}>
-          Cancel
-        </button>
-      </form>
-    </div>
+      <InputField
+        name="endTime"
+        label="End Time"
+        type="time"
+        state={state}
+        change={change}
+      />
+
+      <ButtonBar
+        message={result?.message}
+        disabled={!!state.errors}
+        onCancel={onCancel}
+      />
+    </form>
   );
 };
 
