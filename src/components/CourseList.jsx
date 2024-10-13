@@ -7,6 +7,7 @@ const CourseList = ({
   selectedTerm,
   selectedCourses,
   setSelectedCourses,
+  user,
 }) => {
   const toggleCourseSelection = (course) => {
     const isSelected = selectedCourses.some(
@@ -75,14 +76,16 @@ const CourseList = ({
                 <p>{course.meets}</p>
               </div>
 
-              <Link
-                to={`/edit/${courseID}`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button className="edit-button">
-                  <span className="material-symbols-rounded">edit</span>
-                </button>
-              </Link>
+              {user && (
+                <Link
+                  to={`/edit/${courseID}`}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button className="edit-button">
+                    <span className="material-symbols-rounded">edit</span>
+                  </button>
+                </Link>
+              )}
             </div>
           );
         })}

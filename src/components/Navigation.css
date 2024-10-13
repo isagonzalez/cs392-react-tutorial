@@ -1,0 +1,12 @@
+.sign-in-btn button {
+  padding: 8px 16px;
+  background-color: #288bb7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sign-in-btn .sign-out {
+  background-color: #e31e4c;
+}
