@@ -2,6 +2,7 @@ import "./CoursePlan.css";
 
 const CoursePlan = ({ selectedCourses }) => (
   <div className="course-plan">
+    <h2>Course Plan</h2>
     {selectedCourses.length === 0 ? (
       <div>
         <strong>No courses selected</strong>
