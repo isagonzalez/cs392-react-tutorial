@@ -7,7 +7,7 @@ const CourseList = ({
   selectedTerm,
   selectedCourses,
   setSelectedCourses,
-  user,
+  profile,
 }) => {
   const toggleCourseSelection = (course) => {
     const isSelected = selectedCourses.some(
@@ -76,7 +76,7 @@ const CourseList = ({
                 <p>{course.meets}</p>
               </div>
 
-              {user && (
+              {profile?.isAdmin && (
                 <Link
                   to={`/edit/${courseID}`}
                   onClick={(e) => e.stopPropagation()}

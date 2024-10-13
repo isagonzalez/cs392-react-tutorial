@@ -8,12 +8,13 @@ import TermSelector from "./components/TermSelector";
 import Modal from "./components/Modal";
 import CoursePlan from "./components/CoursePlan";
 import CourseForm from "./components/CourseForm";
-import { useDbData, useAuthState } from "./utilities/firebase";
+import { useDbData } from "./utilities/firebase";
+import { useProfile } from "./utilities/profile";
 
 const terms = ["All", "Fall", "Winter", "Spring"];
 
 const Main = () => {
-  const [user] = useAuthState();
+  const [profile, profileLoading, profileError] = useProfile();
 
   const [selectedTerm, setSelectedTerm] = useState("Fall");
   const [selectedCourses, setSelectedCourses] = useState([]);
@@ -58,7 +59,7 @@ const Main = () => {
               selectedTerm={selectedTerm}
               selectedCourses={selectedCourses}
               setSelectedCourses={setSelectedCourses}
-              user={user}
+              profile={profile}
             />
           }
         />
