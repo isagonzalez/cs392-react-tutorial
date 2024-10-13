@@ -1,4 +1,5 @@
 import "./CourseForm.css";
+import { useParams, useNavigate } from "react-router-dom";
 import { parseDays } from "../utilities/scheduleUtils";
 import { useFormData } from "../utilities/useFormData";
 import { useDbUpdate } from "../utilities/firebase";
@@ -91,22 +92,26 @@ const CheckboxGroup = ({ name, label, options, state, change }) => {
   );
 };
 
-const ButtonBar = ({ message, disabled, onCancel }) => (
-  <div>
-    <div className="actions">
-      <button className="cancel" type="button" onClick={onCancel}>
-        Cancel
-      </button>
-      <button className="submit" type="submit" disabled={disabled}>
-        Submit
-      </button>
-    </div>
-    <span>{message}</span>
-  </div>
-);
+const ButtonBar = ({ message, disabled }) => {
+  const navigate = useNavigate();
 
-const CourseForm = ({ course, onCancel }) => {
-  const courseID = `${course.term[0]}${course.number}`;
+  return (
+    <div>
+      <div className="actions">
+        <button className="cancel" type="button" onClick={() => navigate("/")}>
+          Cancel
+        </button>
+        <button className="submit" type="submit" disabled={disabled}>
+          Submit
+        </button>
+      </div>
+      <span>{message}</span>
+    </div>
+  );
+};
+
+const CourseForm = ({ course }) => {
+  const { courseID } = useParams();
   const [update, result] = useDbUpdate(`/courses/${courseID}`);
   const [state, change] = useFormData(validateForm, {
     title: course?.title || "",
@@ -116,6 +121,8 @@ const CourseForm = ({ course, onCancel }) => {
     startTime: course ? course.meets.split(" ")[1].split("-")[0] : "",
     endTime: course ? course.meets.split(" ")[1].split("-")[1] : "",
   });
+
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -138,7 +145,8 @@ const CourseForm = ({ course, onCancel }) => {
     };
 
     update(updatedCourse);
-    onCancel();
+
+    navigate("/");
   };
 
   return (
@@ -195,11 +203,7 @@ const CourseForm = ({ course, onCancel }) => {
         change={change}
       />
 
-      <ButtonBar
-        message={result?.message}
-        disabled={!!state.errors}
-        onCancel={onCancel}
-      />
+      <ButtonBar message={result?.message} disabled={!!state.errors} />
     </form>
   );
 };

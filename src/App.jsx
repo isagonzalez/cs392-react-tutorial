@@ -1,12 +1,6 @@
 import "./App.css";
 import { useState } from "react";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  useParams,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Banner from "./components/Banner";
 import CourseList from "./components/CourseList";
@@ -22,15 +16,6 @@ const Main = () => {
   const [selectedTerm, setSelectedTerm] = useState("Fall");
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [open, setOpen] = useState(false);
-  const [editingCourse, setEditingCourse] = useState(null);
-
-  const startEditing = (course) => {
-    setEditingCourse(course);
-  };
-
-  const stopEditing = (course) => {
-    setEditingCourse(null);
-  };
 
   const [data, error] = useDbData("/");
 
@@ -60,28 +45,46 @@ const Main = () => {
         <CoursePlan selectedCourses={selectedCourses} />
       </Modal>
 
-      {editingCourse ? (
-        <CourseForm course={editingCourse} onCancel={stopEditing} />
-      ) : (
-        <CourseList
-          courses={data.courses}
-          selectedTerm={selectedTerm}
-          selectedCourses={selectedCourses}
-          setSelectedCourses={setSelectedCourses}
-          startEditing={startEditing}
+      {console.log(data.courses)}
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <CourseList
+              courses={data.courses}
+              selectedTerm={selectedTerm}
+              selectedCourses={selectedCourses}
+              setSelectedCourses={setSelectedCourses}
+            />
+          }
         />
-      )}
+
+        <Route
+          path="/edit/:courseID"
+          element={<CourseFormWrapper courses={data.courses} />}
+        />
+      </Routes>
     </div>
   );
+};
+
+const CourseFormWrapper = ({ courses }) => {
+  const { courseID } = useParams();
+  const course = courses[courseID];
+
+  return <CourseForm course={course} />;
 };
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <div className="container">
-      <Main />
-    </div>
+    <BrowserRouter>
+      <div className="container">
+        <Main />
+      </div>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 

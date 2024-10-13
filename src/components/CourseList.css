@@ -3,3 +3,64 @@
   gap: 12px;
   grid-template-columns: repeat(auto-fill, minmax(12rem, 14rem));
 }
+
+.course-card {
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+}
+
+.meeting-time {
+  border-top: 1px solid #ccc;
+}
+
+.course-card.selected {
+  border: 1px solid #288bb7;
+  background-color: #288bb733;
+}
+
+.course-card.selected .meeting-time {
+  border-top: 1px solid #288bb7 !important;
+}
+
+.course-card:hover {
+  background-color: #288cb72a;
+}
+
+.course-card.selected:hover {
+  border: 1px solid #51b4de !important;
+}
+
+.course-card.conflict {
+  background-color: #52525209;
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.course-card .edit-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #fff;
+  background-color: #bbb;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 6px;
+  cursor: pointer;
+  display: none;
+  transition: opacity 0.3s ease;
+}
+
+.course-card .edit-button span {
+  font-size: 16px;
+}
+
+.course-card:hover .edit-button {
+  display: block;
+  transition: opacity 0.3s ease;
+}
