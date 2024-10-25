@@ -50,25 +50,27 @@ const Main = () => {
 
       {console.log(data.courses)}
 
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <CourseList
-              courses={data.courses}
-              selectedTerm={selectedTerm}
-              selectedCourses={selectedCourses}
-              setSelectedCourses={setSelectedCourses}
-              profile={profile}
-            />
-          }
-        />
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <CourseList
+                courses={data.courses}
+                selectedTerm={selectedTerm}
+                selectedCourses={selectedCourses}
+                setSelectedCourses={setSelectedCourses}
+                profile={profile}
+              />
+            }
+          />
 
-        <Route
-          path="/edit/:courseID"
-          element={<CourseFormWrapper courses={data.courses} />}
-        />
-      </Routes>
+          <Route
+            path="/edit/:courseID"
+            element={<CourseFormWrapper courses={data.courses} />}
+          />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 };
@@ -84,11 +86,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <div className="container">
-        <Main />
-      </div>
-    </BrowserRouter>
+    <Main />
   </QueryClientProvider>
 );
 

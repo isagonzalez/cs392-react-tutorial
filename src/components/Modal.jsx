@@ -5,7 +5,7 @@ const Modal = ({ children, open, close }) => {
 
   return (
     <div className="modal-overlay" onClick={close}>
-      <div className="modal-dialog" onClick={(e) => e.stopPropagation}>
+      <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <button className="close-button" onClick={close}>
             <span className="material-symbols-rounded">close</span>
